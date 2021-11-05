@@ -18,9 +18,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.windowScene = windowScene
         
-        let vc = ViewController()
-        vc.view.backgroundColor = .blue
-        window?.rootViewController = UINavigationController(rootViewController: vc)
+        let employeeViewController = EmployeeListViewController()
+        //vc.view.backgroundColor = .blue
+        window?.rootViewController = UINavigationController(rootViewController: employeeViewController)
         
         window?.makeKeyAndVisible()
     }
