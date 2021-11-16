@@ -9,6 +9,8 @@ import UIKit
 
 class EmployeeListViewController: UIViewController {
   
+  var sortingBy: SortingStyle = .byAlphabet
+  
   private lazy var searchController: UISearchController = {
     let searchController = UISearchController(searchResultsController: nil)
     searchController.searchResultsUpdater = self
@@ -18,13 +20,32 @@ class EmployeeListViewController: UIViewController {
     searchController.searchBar.searchTextField.backgroundColor = UIColor(named: "bgSecondary")
     searchController.searchBar.searchTextField.layer.cornerRadius = 16
     searchController.searchBar.searchTextField.clipsToBounds = true
-    
     searchController.searchBar.showsBookmarkButton = true
     searchController.searchBar.setImage(UIImage(named: "sortButton"), for: .bookmark, state: .normal)
     searchController.searchBar.setImage(UIImage(named: "sortButtonActive"), for: .bookmark, state: .focused)
     searchController.searchBar.setImage(UIImage(named: "search"), for: .search, state: .normal)
     definesPresentationContext = true
     return searchController
+  }()
+  
+  private lazy var departmentSegmentedControl: DepartmentSegmentedControl = {
+    let segmentedControl = DepartmentSegmentedControl(items: ["Все", "Дизайн", "Аналитика", "Менеджмент", "iOS", "Android", "QA", "Бэк-офис", "Frontend", "HR", "PR", "Backend", "Техподдержка"])
+    segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+    segmentedControl.selectedSegmentIndex = 0
+    segmentedControl.tintColor = UIColor(named: "ContentActivePrimary")
+    segmentedControl.apportionsSegmentWidthsByContent = true
+    segmentedControl.setAppearance()
+    return segmentedControl
+  }()
+  
+  private lazy var scrollView: UIScrollView = {
+    let scrollView = UIScrollView()
+    scrollView.translatesAutoresizingMaskIntoConstraints = false
+    scrollView.contentSize = CGSize(width: departmentSegmentedControl.frame.width, height: departmentSegmentedControl.frame.height)
+    scrollView.delegate = self
+    scrollView.isScrollEnabled = true
+    scrollView.showsHorizontalScrollIndicator = false
+    return scrollView
   }()
   
   private let searchIssueView: SearchIssueView = {
@@ -63,48 +84,55 @@ extension EmployeeListViewController: UISearchResultsUpdating, UISearchBarDelega
   }
   
   func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
-    let searchOptions = SortOptionsViewController()
+    
+    showSortingOptions()
+  }
+  
+  private func showSortingOptions() {
+    let searchOptions = SortOptionsViewController(sortingStyle: sortingBy)
     searchOptions.view.translatesAutoresizingMaskIntoConstraints = false
-    searchOptions.view.layer.cornerRadius = 20
-    searchOptions.view.clipsToBounds = true
-    
-    let dimmedView = UIView()
-    dimmedView.translatesAutoresizingMaskIntoConstraints = false
-    dimmedView.backgroundColor = .black
-    dimmedView.alpha = 0.12
-    
-    view.addSubview(dimmedView)
+
     view.addSubview(searchOptions.view)
     
     NSLayoutConstraint.activate([
-      dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
-      dimmedView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      dimmedView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-      
-      searchOptions.view.heightAnchor.constraint(equalToConstant: 300),
-      searchOptions.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
+      searchOptions.view.topAnchor.constraint(equalTo: view.topAnchor),
+      searchOptions.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
       searchOptions.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       searchOptions.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
     ])
-    
     
     self.addChild(searchOptions)
     searchOptions.didMove(toParent: self)
   }
 }
 
+// MARK: - Layout
+
 extension EmployeeListViewController {
   private func setupLayout() {
     view.addSubview(searchIssueView)
+    view.addSubview(scrollView)
+    scrollView.addSubview(departmentSegmentedControl)
     
     NSLayoutConstraint.activate([
       searchIssueView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       searchIssueView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
       searchIssueView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
       searchIssueView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 474),
-      searchIssueView.heightAnchor.constraint(equalToConstant: 118)
-//      searchIssueView.widthAnchor.constraint(equalToConstant: 118)
+      searchIssueView.heightAnchor.constraint(equalToConstant: 118),
+      
+      scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+      scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+      scrollView.heightAnchor.constraint(equalTo: departmentSegmentedControl.heightAnchor),
+      scrollView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+      
+      departmentSegmentedControl.topAnchor.constraint(equalTo: scrollView.topAnchor),
+      departmentSegmentedControl.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+      departmentSegmentedControl.widthAnchor.constraint(equalToConstant: 1020)
     ])
   }
+}
+
+extension EmployeeListViewController: UIScrollViewDelegate {
+  
 }

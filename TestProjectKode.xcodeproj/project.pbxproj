@@ -16,6 +16,8 @@
 		E9420983273464E000C3791D /* Inter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9420982273464E000C3791D /* Inter.ttf */; };
 		E942098527346F3700C3791D /* SortOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E942098427346F3700C3791D /* SortOptionsViewController.swift */; };
 		E97331642735670D00D5A1A0 /* SortingStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97331632735670D00D5A1A0 /* SortingStyle.swift */; };
+		E985CA6A2743EF2C0032C614 /* DepartmentSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E985CA692743EF2C0032C614 /* DepartmentSegmentedControl.swift */; };
+		E985CA6C2743F99F0032C614 /* extension UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E985CA6B2743F99F0032C614 /* extension UIColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		E9420982273464E000C3791D /* Inter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inter.ttf; sourceTree = "<group>"; };
 		E942098427346F3700C3791D /* SortOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOptionsViewController.swift; sourceTree = "<group>"; };
 		E97331632735670D00D5A1A0 /* SortingStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingStyle.swift; sourceTree = "<group>"; };
+		E985CA692743EF2C0032C614 /* DepartmentSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartmentSegmentedControl.swift; sourceTree = "<group>"; };
+		E985CA6B2743F99F0032C614 /* extension UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension UIColor.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +84,8 @@
 			children = (
 				E9390CD12734304300D935BF /* EmployeeListViewController.swift */,
 				E942097F2734607D00C3791D /* SearchIssueView.swift */,
+				E985CA692743EF2C0032C614 /* DepartmentSegmentedControl.swift */,
+				E985CA6B2743F99F0032C614 /* extension UIColor.swift */,
 			);
 			path = EmployeeList;
 			sourceTree = "<group>";
@@ -173,8 +179,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				E9390CD22734304300D935BF /* EmployeeListViewController.swift in Sources */,
+				E985CA6A2743EF2C0032C614 /* DepartmentSegmentedControl.swift in Sources */,
 				E9390CCE2734304300D935BF /* AppDelegate.swift in Sources */,
 				E94209802734607D00C3791D /* SearchIssueView.swift in Sources */,
+				E985CA6C2743F99F0032C614 /* extension UIColor.swift in Sources */,
 				E9390CD02734304300D935BF /* SceneDelegate.swift in Sources */,
 				E97331642735670D00D5A1A0 /* SortingStyle.swift in Sources */,
 				E942098527346F3700C3791D /* SortOptionsViewController.swift in Sources */,

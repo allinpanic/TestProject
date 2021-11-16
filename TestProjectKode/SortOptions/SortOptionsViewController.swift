@@ -14,13 +14,33 @@ final class SortOptionsViewController: UIViewController {
   private lazy var optionsTableView: UITableView = {
     let tableView = UITableView()
     tableView.translatesAutoresizingMaskIntoConstraints = false
-    tableView.backgroundColor = .blue
+    tableView.backgroundColor = .white
     tableView.separatorStyle = .none
     tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     tableView.delegate = self
     tableView.dataSource = self
+    tableView.layer.cornerRadius = 20
+    tableView.clipsToBounds = true
     return tableView
   }()
+  
+  private let dimmedView: UIView = {
+    let view = UIView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.backgroundColor = .black
+    view.alpha = 0.12
+    return view
+  }()
+  
+  init(sortingStyle: SortingStyle) {
+    super.init(nibName: nil, bundle: nil)
+    self.sortingStyle = sortingStyle
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -31,14 +51,19 @@ final class SortOptionsViewController: UIViewController {
   }
   
   private func setupLayout() {
-    
+    view.addSubview(dimmedView)
     view.addSubview(optionsTableView)
     
     NSLayoutConstraint.activate([
-      optionsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-      optionsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-      optionsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-      optionsTableView.heightAnchor.constraint(equalToConstant: 120)
+      dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
+      dimmedView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      dimmedView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      
+      optionsTableView.heightAnchor.constraint(equalToConstant: 300),
+      optionsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
+      optionsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      optionsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
     ])
   }
 }
@@ -87,6 +112,8 @@ extension SortOptionsViewController: UITableViewDelegate, UITableViewDataSource 
       tableView.cellForRow(at: indexPath)?.imageView?.image = UIImage(named: "Selected-29")
       tableView.cellForRow(at: anotherIndexpath)?.imageView?.image = UIImage(named: "Unselected-29")
       
+      guard let parent = parent as? EmployeeListViewController else {return}
+      parent.sortingBy = sortingStyle
       
       willMove(toParent: nil)
       removeFromParent()
@@ -98,6 +125,9 @@ extension SortOptionsViewController: UITableViewDelegate, UITableViewDataSource 
       tableView.cellForRow(at: indexPath)?.imageView?.image = UIImage(named: "Selected-29")
       tableView.cellForRow(at: anotherIndexpath)?.imageView?.image = UIImage(named: "Unselected-29")
       
+      guard let parent = parent as? EmployeeListViewController else {return}
+      parent.sortingBy = sortingStyle
+      print(parent.sortingBy)
       
       willMove(toParent: nil)
       removeFromParent()
