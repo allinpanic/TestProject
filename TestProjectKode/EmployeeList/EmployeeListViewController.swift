@@ -10,11 +10,34 @@ import SkeletonView
 
 class EmployeeListViewController: UIViewController, UIScrollViewDelegate {
   
-  var sortingBy: SortingStyle = .byAlphabet
+  var sortingBy: SortingStyle = .byAlphabet {
+    didSet {
+      switch sortingBy {
+      case .byAlphabet:
+        if isFiltering {
+          filteredEmployees.sort(by: {$0.firstName < $1.firstName})
+        } else {
+          employees.sort(by: {$0.firstName < $1.firstName})
+        }
+        
+      case .byBirthday:
+        if isFiltering {
+          filteredEmployees.sort(by: {$0.birthday < $1.birthday})
+        } else {
+          employees.sort(by: {$0.birthday < $1.birthday})
+        }
+      }
+      employeeTableView.reloadData()
+    }
+  }
   
   // MARK: - Private properties
+  
   private var employees: [Employee] = []
   private var filteredEmployees: [Employee] = []
+  
+//  private var employeesThisYearBirthday: [Employee] = []
+//  private var employeesNextYearBirthday: [Employee] = []
   
   private var isSearchBarEmpty: Bool {
     return searchController.searchBar.text?.isEmpty ?? true
@@ -23,6 +46,8 @@ class EmployeeListViewController: UIViewController, UIScrollViewDelegate {
   private var isFiltering: Bool {
     return searchController.isActive || departmentSegmentedControl.selectedSegmentIndex > 0
   }
+  
+  private let refreshControl = UIRefreshControl()
   
   private lazy var searchController: UISearchController = {
     let searchController = UISearchController(searchResultsController: nil)
@@ -75,6 +100,7 @@ class EmployeeListViewController: UIViewController, UIScrollViewDelegate {
     tableView.isSkeletonable = true
     tableView.estimatedRowHeight = 84
     tableView.backgroundView?.isHidden = true
+    tableView.refreshControl = refreshControl
     return tableView
   }()
   
@@ -83,6 +109,13 @@ class EmployeeListViewController: UIViewController, UIScrollViewDelegate {
     view.translatesAutoresizingMaskIntoConstraints = false
     view.isHidden = true
     return view
+  }()
+  
+  private let lineNavBar: UIImageView = {
+    let imageView = UIImageView()
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    imageView.image = UIImage(color: .systemGray4, size: CGSize(width: UIScreen.main.bounds.width, height: 0.2))
+    return imageView
   }()
   
   // MARK: - ViewDidload
@@ -94,9 +127,17 @@ class EmployeeListViewController: UIViewController, UIScrollViewDelegate {
     navigationItem.searchController = searchController
     navigationItem.hidesSearchBarWhenScrolling = false
     
+    refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        
     setupLayout()
     
     getEmployees()
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    
+    setNavBarAppearance()
   }
 }
 
@@ -132,11 +173,13 @@ extension EmployeeListViewController {
     view.addSubview(scrollView)
     scrollView.addSubview(departmentSegmentedControl)
     view.addSubview(employeeTableView)
+    view.addSubview(lineNavBar)
     
     NSLayoutConstraint.activate([
-      searchIssueView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      searchIssueView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-      searchIssueView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+      searchIssueView.topAnchor.constraint(equalTo: employeeTableView.topAnchor),
+      searchIssueView.centerXAnchor.constraint(equalTo: employeeTableView.centerXAnchor),
+      searchIssueView.leadingAnchor.constraint(equalTo: employeeTableView.leadingAnchor),
+      searchIssueView.trailingAnchor.constraint(equalTo: employeeTableView.trailingAnchor),
       searchIssueView.heightAnchor.constraint(equalToConstant: 118),
       
       scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -148,11 +191,25 @@ extension EmployeeListViewController {
       departmentSegmentedControl.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
       departmentSegmentedControl.widthAnchor.constraint(equalToConstant: 1020),
       
-      employeeTableView.topAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 5),
+      employeeTableView.topAnchor.constraint(equalTo: scrollView.bottomAnchor),
       employeeTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
       employeeTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-      employeeTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+      employeeTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+      
+      lineNavBar.topAnchor.constraint(equalTo: scrollView.bottomAnchor),
+      lineNavBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      lineNavBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
     ])
+  }
+  
+  private func setNavBarAppearance() {
+    let navBarAppearance = UINavigationBarAppearance()
+    navBarAppearance.configureWithOpaqueBackground()
+    navBarAppearance.backgroundColor = view.backgroundColor
+    navBarAppearance.shadowColor = .clear
+    
+    navigationController?.navigationBar.standardAppearance = navBarAppearance
+    navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
   }
 }
 
@@ -188,6 +245,8 @@ extension EmployeeListViewController: UITableViewDelegate, SkeletonTableViewData
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
+    tableView.deselectRow(at: indexPath, animated: true)
+    
     let employee: Employee
     
     if isFiltering {
@@ -206,6 +265,7 @@ extension EmployeeListViewController: UITableViewDelegate, SkeletonTableViewData
   }
   
   func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    
     if sortingBy == .byBirthday {
       if tableView.numberOfSections > 0 {
         let yearHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: YearSectionView.reuseIdentifier) as? YearSectionView
@@ -254,25 +314,25 @@ extension EmployeeListViewController {
   }
   
   private func filterContentForSearchText(_ searchText: String,
-                                            department: Department? = nil) {
-      filteredEmployees = employees.filter { (employee: Employee) -> Bool in
-
-        let doesDepartmentMatch = department == .all || employee.department == department
-        let containsSearchText = employee.firstName.lowercased().contains(searchText.lowercased()) || employee.lastName.lowercased().contains(searchText.lowercased()) || employee.userTag.lowercased().contains(searchText.lowercased())
-
-        if isSearchBarEmpty {
-          return doesDepartmentMatch
-        } else {
-          return doesDepartmentMatch && containsSearchText
-        }
+                                          department: Department? = nil) {
+    filteredEmployees = employees.filter { (employee: Employee) -> Bool in
+      
+      let doesDepartmentMatch = department == .all || employee.department == department
+      let containsSearchText = employee.firstName.lowercased().contains(searchText.lowercased()) || employee.lastName.lowercased().contains(searchText.lowercased()) || employee.userTag.lowercased().contains(searchText.lowercased())
+      
+      if isSearchBarEmpty {
+        return doesDepartmentMatch
+      } else {
+        return doesDepartmentMatch && containsSearchText
+      }
     }
     
-    print("filtered - \(filteredEmployees.count)")
-    
-    
     if filteredEmployees.isEmpty {
-      employeeTableView.backgroundView?.isHidden = false
-      employeeTableView.backgroundView = searchIssueView
+      
+      if !isSearchBarEmpty {
+        employeeTableView.backgroundView?.isHidden = false
+        employeeTableView.backgroundView = searchIssueView
+      }
     } else {
       employeeTableView.backgroundView?.isHidden = true
     }
@@ -321,7 +381,7 @@ extension EmployeeListViewController {
   private func showSortingOptions() {
     let searchOptions = SortOptionsViewController(sortingStyle: sortingBy)
     searchOptions.view.translatesAutoresizingMaskIntoConstraints = false
-
+    
     view.addSubview(searchOptions.view)
     
     NSLayoutConstraint.activate([
@@ -333,5 +393,10 @@ extension EmployeeListViewController {
     
     self.addChild(searchOptions)
     searchOptions.didMove(toParent: self)
+  }
+  
+  @objc private func refresh(_ sender: AnyObject) {
+    getEmployees()
+    employeeTableView.refreshControl?.endRefreshing()
   }
 }

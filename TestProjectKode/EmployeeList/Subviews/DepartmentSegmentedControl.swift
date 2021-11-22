@@ -8,14 +8,12 @@
 import UIKit
 
 final class DepartmentSegmentedControl: UISegmentedControl {
-
   
   override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
     return true
   }
   
-  func setAppearance() {
-    
+  func setAppearance() {    
     let tintColorImage = selectedBackground(color: tintColor , size: CGSize(width: self.frame.width, height: self.frame.height + 6))
     
     let dividerImage = UIImage(color: backgroundColor ?? .clear, size: CGSize(width: 2, height: 10))
@@ -31,7 +29,7 @@ final class DepartmentSegmentedControl: UISegmentedControl {
     setDividerImage(dividerImage, forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
   }
   
-  func selectedBackground(color: UIColor, size: CGSize) -> UIImage? {
+  private func selectedBackground(color: UIColor, size: CGSize) -> UIImage? {
     let lineWidth: CGFloat = 2
     return UIImage.render(size: size) {
       color.setFill()

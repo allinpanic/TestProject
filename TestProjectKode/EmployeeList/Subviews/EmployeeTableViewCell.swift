@@ -14,12 +14,10 @@ final class EmployeeTableViewCell: UITableViewCell {
   
   var employee: Employee! {
     didSet {
-      guard let url = URL(string: employee.avatarUrl) else {return}
-      
+      guard let url = URL(string: employee.avatarUrl) else {return}      
       KingfisherManager.shared.downloader.downloadTimeout = 600
       
-      avatar.kf.setImage(with: url)
-      
+      avatar.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
       nameLabel.text = employee.firstName + " " + employee.lastName
       tagLabel.text = employee.userTag
       positionLabel.text = employee?.position
@@ -53,7 +51,8 @@ final class EmployeeTableViewCell: UITableViewCell {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.textColor = UIColor(named: "TextTetriary")
     label.font = UIFont(name: "Inter", size: 14)
-//    label.isSkeletonable = true
+    label.isSkeletonable = true
+    label.isHiddenWhenSkeletonIsActive = true
     return label
   }()
   

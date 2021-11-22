@@ -19,7 +19,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         
         let employeeViewController = EmployeeListViewController()
-        //vc.view.backgroundColor = .blue
         window?.rootViewController = UINavigationController(rootViewController: employeeViewController)
         
         window?.makeKeyAndVisible()
