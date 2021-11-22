@@ -20,6 +20,7 @@
 		E97331642735670D00D5A1A0 /* SortingStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97331632735670D00D5A1A0 /* SortingStyle.swift */; };
 		E97B70A0274BA09F003D249A /* NavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97B709F274BA09F003D249A /* NavigationView.swift */; };
 		E97B70A4274C147A003D249A /* Department.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97B70A3274C147A003D249A /* Department.swift */; };
+		E97B70A6274C2DA7003D249A /* CriticalErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97B70A5274C2DA7003D249A /* CriticalErrorView.swift */; };
 		E985CA6A2743EF2C0032C614 /* DepartmentSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E985CA692743EF2C0032C614 /* DepartmentSegmentedControl.swift */; };
 		E985CA6C2743F99F0032C614 /* extension UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E985CA6B2743F99F0032C614 /* extension UIColor.swift */; };
 		E985CA6F274423D00032C614 /* Employee.swift in Sources */ = {isa = PBXBuildFile; fileRef = E985CA6E274423D00032C614 /* Employee.swift */; };
@@ -46,6 +47,7 @@
 		E97331632735670D00D5A1A0 /* SortingStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingStyle.swift; sourceTree = "<group>"; };
 		E97B709F274BA09F003D249A /* NavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationView.swift; sourceTree = "<group>"; };
 		E97B70A3274C147A003D249A /* Department.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Department.swift; sourceTree = "<group>"; };
+		E97B70A5274C2DA7003D249A /* CriticalErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CriticalErrorView.swift; sourceTree = "<group>"; };
 		E985CA692743EF2C0032C614 /* DepartmentSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartmentSegmentedControl.swift; sourceTree = "<group>"; };
 		E985CA6B2743F99F0032C614 /* extension UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension UIColor.swift"; sourceTree = "<group>"; };
 		E985CA6E274423D00032C614 /* Employee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Employee.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				E985CA692743EF2C0032C614 /* DepartmentSegmentedControl.swift */,
 				E985CA702744294E0032C614 /* EmployeeTableViewCell.swift */,
 				E9E16A8C2746778A002186C1 /* YearSectionView.swift */,
+				E97B70A5274C2DA7003D249A /* CriticalErrorView.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -285,6 +288,7 @@
 			files = (
 				E97B70A0274BA09F003D249A /* NavigationView.swift in Sources */,
 				E985CA742744331E0032C614 /* DetailViewController.swift in Sources */,
+				E97B70A6274C2DA7003D249A /* CriticalErrorView.swift in Sources */,
 				E97B70A4274C147A003D249A /* Department.swift in Sources */,
 				E9115788274A66AC00742FD0 /* NetworkServiceManager.swift in Sources */,
 				E9E16A8D2746778A002186C1 /* YearSectionView.swift in Sources */,

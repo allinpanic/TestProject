@@ -118,6 +118,16 @@ class EmployeeListViewController: UIViewController, UIScrollViewDelegate {
     return imageView
   }()
   
+  private let errorView: CriticalErrorView = {
+    let view = CriticalErrorView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+//    view.isUserInteractionEnabled = true
+    view.tryAgainButton.addTarget(self, action: #selector(tryAgainButtonTapped), for: .touchUpInside)
+    view.backgroundColor = .white
+    return view
+  }()
+  
+  
   // MARK: - ViewDidload
   
   override func viewDidLoad() {
@@ -341,7 +351,6 @@ extension EmployeeListViewController {
   }
   
   private func getEmployees() {
-    
     employeeTableView.isSkeletonable = true
     employeeTableView.showAnimatedGradientSkeleton()
 
@@ -366,12 +375,15 @@ extension EmployeeListViewController {
         
       case .failure(let error):
         print(error.localizedDescription)
+        
+        DispatchQueue.main.async {
+          self?.addNetworkErrorView()
+        }
       }
     }
   }
   
   @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-    
     let department = getDepartment()
     print(department)
     
@@ -398,5 +410,26 @@ extension EmployeeListViewController {
   @objc private func refresh(_ sender: AnyObject) {
     getEmployees()
     employeeTableView.refreshControl?.endRefreshing()
+  }
+  
+  private func addNetworkErrorView() {
+    view.addSubview(errorView)
+    self.navigationController?.navigationBar.layer.zPosition = -1
+    self.navigationController?.navigationBar.isUserInteractionEnabled = false
+    
+    NSLayoutConstraint.activate([
+      errorView.topAnchor.constraint(equalTo: view.topAnchor),
+      errorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      errorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      errorView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+    ])
+  }
+  
+  @objc private func tryAgainButtonTapped() {
+    errorView.removeFromSuperview()
+    self.navigationController?.navigationBar.layer.zPosition = 0
+    self.navigationController?.navigationBar.isUserInteractionEnabled = true
+    
+    getEmployees()
   }
 }
