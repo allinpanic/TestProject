@@ -7,14 +7,50 @@
 
 import Foundation
 
-struct Employee {
-  let id: String
-  let avatarURL: String
-  let firstName: String
-  let lastName: String
-  let userTag: String
-  let department: String
-  let position: String
-  let birthday: String
-  let phone: String
+struct RequestResult: Codable {
+  var items: [Employee]
+}
+
+struct Employee: Codable {
+  var id: String
+  var avatarUrl: String
+  var firstName: String
+  var lastName: String
+  var userTag: String
+  var department: Department
+  var position: String
+  var birthday: String
+  var phone: String
+}
+
+enum Department: String, Codable {
+  case all
+  case android
+  case ios
+  case design
+  case management
+  case qa
+  case back_office
+  case frontend
+  case hr
+  case pr
+  case backend
+  case support
+  case analytics
+  
+//  enum CodingKeys: String, CodingKey {
+//    case all
+//    case android
+//    case ios
+//    case design
+//    case management
+//    case qa
+//    case backOffice = "back_office"
+//    case frontend
+//    case hr
+//    case pr
+//    case backend
+//    case support
+//    case analytics
+//  }
 }

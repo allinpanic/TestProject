@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9D7C31F672EE1222A79B5F11 /* Pods_TestProjectKode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BDD938D381B7FD79FB626C7 /* Pods_TestProjectKode.framework */; };
+		E9115788274A66AC00742FD0 /* NetworkServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9115787274A66AC00742FD0 /* NetworkServiceManager.swift */; };
 		E9390CCE2734304300D935BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9390CCD2734304300D935BF /* AppDelegate.swift */; };
 		E9390CD02734304300D935BF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9390CCF2734304300D935BF /* SceneDelegate.swift */; };
 		E9390CD22734304300D935BF /* EmployeeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9390CD12734304300D935BF /* EmployeeListViewController.swift */; };
@@ -29,6 +30,7 @@
 		0FEBC097E4C71CDBD9D91EAE /* Pods-TestProjectKode.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestProjectKode.release.xcconfig"; path = "Target Support Files/Pods-TestProjectKode/Pods-TestProjectKode.release.xcconfig"; sourceTree = "<group>"; };
 		7BDD938D381B7FD79FB626C7 /* Pods_TestProjectKode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TestProjectKode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E33D340A1C35DF304820277C /* Pods-TestProjectKode.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestProjectKode.debug.xcconfig"; path = "Target Support Files/Pods-TestProjectKode/Pods-TestProjectKode.debug.xcconfig"; sourceTree = "<group>"; };
+		E9115787274A66AC00742FD0 /* NetworkServiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceManager.swift; sourceTree = "<group>"; };
 		E9390CCA2734304300D935BF /* TestProjectKode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestProjectKode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9390CCD2734304300D935BF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E9390CCF2734304300D935BF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 				E9390CD62734304400D935BF /* Assets.xcassets */,
 				E9390CD82734304400D935BF /* LaunchScreen.storyboard */,
 				E9390CDB2734304400D935BF /* Info.plist */,
+				E9115787274A66AC00742FD0 /* NetworkServiceManager.swift */,
 			);
 			path = TestProjectKode;
 			sourceTree = "<group>";
@@ -275,6 +278,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E985CA742744331E0032C614 /* DetailViewController.swift in Sources */,
+				E9115788274A66AC00742FD0 /* NetworkServiceManager.swift in Sources */,
 				E9E16A8D2746778A002186C1 /* YearSectionView.swift in Sources */,
 				E9390CD22734304300D935BF /* EmployeeListViewController.swift in Sources */,
 				E985CA6F274423D00032C614 /* Employee.swift in Sources */,

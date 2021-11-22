@@ -51,7 +51,7 @@ final class SearchIssueView: UIView {
     
     NSLayoutConstraint.activate([
       searchImage.centerXAnchor.constraint(equalTo: centerXAnchor),
-      searchImage.topAnchor.constraint(equalTo: topAnchor),
+      searchImage.topAnchor.constraint(equalTo: topAnchor, constant: 80),
       searchImage.heightAnchor.constraint(equalToConstant: 56),
       searchImage.widthAnchor.constraint(equalToConstant: 56),
       

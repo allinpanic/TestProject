@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class EmployeeTableViewCell: UITableViewCell {
   
@@ -13,8 +14,11 @@ final class EmployeeTableViewCell: UITableViewCell {
   
   var employee: Employee! {
     didSet {
-      //      avatar.image = employee.avatarURL
-      avatar.image = UIImage(color: .cyan, size: CGSize(width: 72, height: 72))
+      guard let url = URL(string: employee.avatarUrl) else {return}
+      
+      KingfisherManager.shared.downloader.downloadTimeout = 600
+      
+      avatar.kf.setImage(with: url)
       
       nameLabel.text = employee.firstName + " " + employee.lastName
       tagLabel.text = employee.userTag
@@ -40,6 +44,7 @@ final class EmployeeTableViewCell: UITableViewCell {
     label.font = UIFont(name: "Inter", size: 16)
     label.isSkeletonable = true
     label.linesCornerRadius = 10
+    label.text = "Name LongSurname"
     return label
   }()
   
@@ -59,6 +64,7 @@ final class EmployeeTableViewCell: UITableViewCell {
     label.font = UIFont(name: "Inter", size: 13)
     label.isSkeletonable = true
     label.linesCornerRadius = 10
+    label.text = "Positionlabel"
     return label
   }()
   
