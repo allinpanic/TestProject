@@ -12,7 +12,6 @@ final class NavigationView: UIView {
   var employee: Employee! {
     didSet {
       guard let url = URL(string: employee.avatarUrl) else {return}
-//      KingfisherManager.shared.downloader.downloadTimeout = 600
       avatarImageView.kf.setImage(with: url)
       nameLabel.text = employee.firstName + " " + employee.lastName
       tagLabel.text = employee.userTag

@@ -32,7 +32,9 @@ final class YearSectionView: UITableViewHeaderFooterView {
   private let yearLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
-    label.text = "2022"
+    guard let nextYearDate = Calendar.current.date(byAdding: .year, value: 1, to: Date()) else {return label}
+    let nextYear = Calendar.current.component(.year, from: nextYearDate)
+    label.text = nextYear.description
     label.textColor = UIColor(named: "TextTetriary")
     label.font = UIFont(name: "Inter", size: 15)
     return label

@@ -31,7 +31,7 @@ extension Employee {
     let currentYear = Calendar.current.component(.year, from: Date())    
     let yearDifference = currentYear - birthdayYear
     
-    if yearDifference > age {
+    if yearDifference == age {
       return true
     }
     
@@ -76,6 +76,16 @@ extension Employee {
     
     let string = dateFormatter.string(from: date)
     return string
+  }
+  
+  func getCelebration() -> String {
+    guard let date = getDate() else {return birthday}
+            
+     let format = DateFormatter()
+    format.dateFormat = "MM-dd"
+    let celebration = format.string(from: date)
+    
+    return celebration
   }
 }
 

@@ -12,22 +12,8 @@ class EmployeeListViewController: UIViewController, UIScrollViewDelegate {
   
   var sortingBy: SortingStyle = .byAlphabet {
     didSet {
-      switch sortingBy {
-      case .byAlphabet:
-        if isFiltering {
-          filteredEmployees.sort(by: {$0.firstName < $1.firstName})
-        } else {
-          employees.sort(by: {$0.firstName < $1.firstName})
-        }
-        
-      case .byBirthday:
-        if isFiltering {
-          filteredEmployees.sort(by: {$0.birthday < $1.birthday})
-        } else {
-          employees.sort(by: {$0.birthday < $1.birthday})
-        }
-      }
-      employeeTableView.reloadData()
+      let department = getDepartment()
+      filterContentForSearchText(searchController.searchBar.text ?? "", department: department)
     }
   }
   
@@ -36,8 +22,8 @@ class EmployeeListViewController: UIViewController, UIScrollViewDelegate {
   private var employees: [Employee] = []
   private var filteredEmployees: [Employee] = []
   
-//  private var employeesThisYearBirthday: [Employee] = []
-//  private var employeesNextYearBirthday: [Employee] = []
+  private var employeesThisYearBirthday: [Employee] = []
+  private var employeesNextYearBirthday: [Employee] = []
   
   private var isSearchBarEmpty: Bool {
     return searchController.searchBar.text?.isEmpty ?? true
@@ -121,7 +107,6 @@ class EmployeeListViewController: UIViewController, UIScrollViewDelegate {
   private let errorView: CriticalErrorView = {
     let view = CriticalErrorView()
     view.translatesAutoresizingMaskIntoConstraints = false
-//    view.isUserInteractionEnabled = true
     view.tryAgainButton.addTarget(self, action: #selector(tryAgainButtonTapped), for: .touchUpInside)
     view.backgroundColor = .white
     return view
@@ -171,7 +156,11 @@ extension EmployeeListViewController: UISearchResultsUpdating, UISearchBarDelega
   }
   
   func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
-    showSortingOptions()
+    let viewController = SortOptionsViewController(sortingStyle: sortingBy)
+    viewController.delegate = self
+    viewController.modalPresentationStyle = .overFullScreen
+    
+    present(viewController, animated: false, completion: nil)
   }
 }
 
@@ -221,6 +210,19 @@ extension EmployeeListViewController {
     navigationController?.navigationBar.standardAppearance = navBarAppearance
     navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
   }
+  
+  private func addNetworkErrorView() {
+    view.addSubview(errorView)
+    self.navigationController?.navigationBar.layer.zPosition = -1
+    self.navigationController?.navigationBar.isUserInteractionEnabled = false
+    
+    NSLayoutConstraint.activate([
+      errorView.topAnchor.constraint(equalTo: view.topAnchor),
+      errorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      errorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      errorView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+    ])
+  }
 }
 
 // MARK: - TableView delegate, datasourse
@@ -228,7 +230,25 @@ extension EmployeeListViewController {
 extension EmployeeListViewController: UITableViewDelegate, SkeletonTableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     if isFiltering {
+      
+      if sortingBy == .byBirthday {
+        if !employeesNextYearBirthday.isEmpty {
+          if section == 0 {
+            return employeesThisYearBirthday.count
+          } else {
+            return employeesNextYearBirthday.count
+          }
+        }
+      }
       return filteredEmployees.count
+    } else {
+      if sortingBy == .byBirthday {
+        if section == 0 {
+          return employeesThisYearBirthday.count
+        } else {
+          return employeesNextYearBirthday.count
+        }
+      }
     }
     return employees.count
   }
@@ -241,12 +261,42 @@ extension EmployeeListViewController: UITableViewDelegate, SkeletonTableViewData
     
     cell.isSkeletonable = true
     
-    if isFiltering {
-        cell.employee = filteredEmployees[indexPath.row]
-      } else {
-        cell.employee = employees[indexPath.row]
-      }
+    let employee = getEmployee(indexPath: indexPath)
+    cell.employee = employee
+    
+    cell.sortingStyle = sortingBy
     return cell
+  }
+  
+  private func getEmployee(indexPath: IndexPath) -> Employee {
+    var employeeForCell: Employee
+    
+    if isFiltering {
+      
+      switch sortingBy {
+      case .byAlphabet :
+        employeeForCell = filteredEmployees[indexPath.row]
+        
+      case .byBirthday:
+        if indexPath.section == 0 {
+          employeeForCell = employeesThisYearBirthday[indexPath.row]
+        } else {
+          employeeForCell = employeesNextYearBirthday[indexPath.row]
+        }
+      }
+    } else {
+      if sortingBy == .byBirthday {
+        if indexPath.section == 0 {
+          employeeForCell = employeesThisYearBirthday[indexPath.row]
+        } else {
+          employeeForCell = employeesNextYearBirthday[indexPath.row]
+        }
+      } else {
+        employeeForCell = employees[indexPath.row]
+      }
+    }
+    
+    return employeeForCell
   }
 
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -257,13 +307,7 @@ extension EmployeeListViewController: UITableViewDelegate, SkeletonTableViewData
     
     tableView.deselectRow(at: indexPath, animated: true)
     
-    let employee: Employee
-    
-    if isFiltering {
-      employee = filteredEmployees[indexPath.row]
-    } else {
-      employee = employees[indexPath.row]
-    }
+    let employee = getEmployee(indexPath: indexPath)
     
     let detailViewController = DetailViewController(employee: employee)
     
@@ -295,7 +339,9 @@ extension EmployeeListViewController: UITableViewDelegate, SkeletonTableViewData
   
   func numberOfSections(in tableView: UITableView) -> Int {
     if sortingBy == .byBirthday {
-      return 2
+      if !employeesNextYearBirthday.isEmpty {
+        return 2
+      }
     }
     return 1
   }
@@ -323,6 +369,8 @@ extension EmployeeListViewController {
     }
   }
   
+  // MARK: - Filtering for search
+  
   private func filterContentForSearchText(_ searchText: String,
                                           department: Department? = nil) {
     filteredEmployees = employees.filter { (employee: Employee) -> Bool in
@@ -345,20 +393,31 @@ extension EmployeeListViewController {
       }
     } else {
       employeeTableView.backgroundView?.isHidden = true
+      
+      if sortingBy == .byBirthday {
+        employeesThisYearBirthday = filteredEmployees.filter({!$0.isBirthdayNextYear})
+        employeesNextYearBirthday = filteredEmployees.filter({$0.isBirthdayNextYear})
+        
+        employeesThisYearBirthday.sort(by: {$0.getCelebration().compare($1.getCelebration()) == .orderedAscending})
+        employeesNextYearBirthday.sort(by: {$0.getCelebration().compare($1.getCelebration()) == .orderedAscending})
+      } else {
+        filteredEmployees.sort(by: {$0.firstName < $1.firstName})
+      }
     }
-
+    
     employeeTableView.reloadData()
   }
+  
+  // MARK: - Get employees
   
   private func getEmployees() {
     employeeTableView.isSkeletonable = true
     employeeTableView.showAnimatedGradientSkeleton()
-
+    
     let networkManager = NetworkServiceManager()
     let session = URLSession.shared
     
     let request = networkManager.employeesRequest()
-    let errorRequest = networkManager.errorRequest()
     
     networkManager.getData(request: request, session: session) { [weak self] result in
       switch result {
@@ -366,6 +425,12 @@ extension EmployeeListViewController {
         
         guard let result = networkManager.parseJSON(jsonData: data, toType: RequestResult.self) else {return}
         self?.employees = result.items
+        
+        if self?.sortingBy == .byAlphabet {
+          self?.employees.sort(by: {$0.firstName < $1.firstName})
+        } else {
+          self?.employees.sort(by: {$0.birthday < $1.birthday})
+        }
         
         DispatchQueue.main.async {
           self?.employeeTableView.stopSkeletonAnimation()
@@ -385,44 +450,12 @@ extension EmployeeListViewController {
   
   @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
     let department = getDepartment()
-    print(department)
-    
     filterContentForSearchText(searchController.searchBar.text ?? "", department: department)
-  }
-  
-  private func showSortingOptions() {
-    let searchOptions = SortOptionsViewController(sortingStyle: sortingBy)
-    searchOptions.view.translatesAutoresizingMaskIntoConstraints = false
-    
-    view.addSubview(searchOptions.view)
-    
-    NSLayoutConstraint.activate([
-      searchOptions.view.topAnchor.constraint(equalTo: view.topAnchor),
-      searchOptions.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-      searchOptions.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      searchOptions.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-    ])
-    
-    self.addChild(searchOptions)
-    searchOptions.didMove(toParent: self)
   }
   
   @objc private func refresh(_ sender: AnyObject) {
     getEmployees()
     employeeTableView.refreshControl?.endRefreshing()
-  }
-  
-  private func addNetworkErrorView() {
-    view.addSubview(errorView)
-    self.navigationController?.navigationBar.layer.zPosition = -1
-    self.navigationController?.navigationBar.isUserInteractionEnabled = false
-    
-    NSLayoutConstraint.activate([
-      errorView.topAnchor.constraint(equalTo: view.topAnchor),
-      errorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      errorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      errorView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-    ])
   }
   
   @objc private func tryAgainButtonTapped() {
@@ -431,5 +464,11 @@ extension EmployeeListViewController {
     self.navigationController?.navigationBar.isUserInteractionEnabled = true
     
     getEmployees()
+  }
+}
+
+extension EmployeeListViewController: SortingOptionsDelegate {
+  func changeSortingStyle(style: SortingStyle) {
+    sortingBy = style
   }
 }

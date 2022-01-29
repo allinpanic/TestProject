@@ -21,7 +21,23 @@ final class EmployeeTableViewCell: UITableViewCell {
       nameLabel.text = employee.firstName + " " + employee.lastName
       tagLabel.text = employee.userTag
       positionLabel.text = employee?.position
-      birthdayLabel.text = employee?.birthday
+      
+      let birthDay = getBirthday(from: employee.birthday)
+      
+      birthdayLabel.text = birthDay
+    }
+  }
+  
+  var sortingStyle: SortingStyle! {
+    didSet {
+      switch sortingStyle {
+      case .byAlphabet:
+        birthdayLabel.isHidden = true
+      case .byBirthday:
+        birthdayLabel.isHidden = false
+      case .none:
+        birthdayLabel.isHidden = true
+      }
     }
   }
   
@@ -112,5 +128,17 @@ final class EmployeeTableViewCell: UITableViewCell {
       birthdayLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
       birthdayLabel.centerYAnchor.constraint(equalTo: avatar.centerYAnchor)
     ])
+  }
+  
+  private func getBirthday(from string: String) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd"
+    guard let date = dateFormatter.date(from: string) else {return ""}
+    dateFormatter.dateFormat = "dd"
+    let day = dateFormatter.string(from: date)
+    dateFormatter.dateFormat = "MMMM"
+    let month = dateFormatter.string(from: date).prefix(3)
+    let birthDay = day + " " + month
+    return birthDay
   }
 }
